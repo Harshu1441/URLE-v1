@@ -1,0 +1,9 @@
+control-plane/logs/
+control-plane/data/
+frontend/node_modules/
+frontend/dist/
+*.test
+*.exe
+*.log
+*.out
+.DS_Store

@@ -1,0 +1,26 @@
+[Unit]
+Description=Unified Linux Resource Enforcement Agent (ULRE)
+After=local-fs.target systemd-journald.service
+ConditionPathExists=/sys/fs/cgroup/cgroup.controllers
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ulre-agent enforce -c /etc/ulre/policies.json --state-dir /var/lib/ulre
+Restart=on-failure
+RestartSec=5s
+
+# Create delegated cgroup v2 subtree for ULRE-managed workloads
+Delegate=yes
+Slice=ulre.slice
+
+# Least-privilege capability bounding (see docs/security.md)
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_KILL
+AmbientCapabilities=CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_KILL
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/sys/fs/cgroup /var/lib/ulre /var/log/ulre
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "name": "batch-worker-guard",
+      "group": "batch-workers",
+      "priority": 100,
+      "mode": "enforce",
+      "criticality": "normal",
+      "allow_destructive": false,
+      "selectors": {
+        "process_name": "stress-ng"
+      },
+      "limits": {
+        "memory.min": "33554432",
+        "memory.low": "67108864",
+        "memory.high": "268435456",
+        "memory.max": "536870912",
+        "memory.swap.max": "0",
+        "memory.oom.group": true,
+        "cpu.max": "50000 100000",
+        "cpu.weight": 80,
+        "pids.max": "128"
+      },
+      "oom": {
+        "conditions": {
+          "memory_percent": 85,
+          "psi_some_avg10": 15.0,
+          "events_high_delta": 1,
+          "repeated_violations": 2,
+          "violation_window_sec": 60
+        },
+        "actions": ["alert", "throttle", "isolate"],
+        "cooldown_sec": 30,
+        "max_retries": 3,
+        "remediation_timeout_sec": 10
+      }
+    }
+  ]
+}
